@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
   const params = parsed.data;
   const simulatedStatus = params.simulate ? simulationStatus[params.simulate] : undefined;
-  const key = `weather:v2:${params.lat}:${params.lon}:${params.units}:${params.days}:${params.ai}`;
+  const key = `weather:v4:${params.lat}:${params.lon}:${params.units}:${params.days}:${params.ai}:${params.name ?? ""}:${params.country ?? ""}`;
   const cached = getCache<WeatherPayload>(key);
 
   if (simulatedStatus !== undefined) {
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ code, message: errorMessage(code) }, { status: simulatedStatus || 503 });
   }
 
-  if (cached && !cached.isExpired) {
+  if (cached && !cached.isExpired && (!params.ai || cached.value.aiSummary)) {
     return NextResponse.json({
       ...cached.value,
       meta: {

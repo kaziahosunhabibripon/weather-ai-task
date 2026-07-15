@@ -2,6 +2,7 @@
 
 import { Crosshair, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { presets } from "@/lib/mock-data";
 import type { LocationOption } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/field";
@@ -10,10 +11,15 @@ import { setLocation } from "@/store/slices/preferences-slice";
 import { rememberLocation } from "@/store/slices/recent-locations-slice";
 
 const catalog: LocationOption[] = [
+  ...presets,
   { id: "chittagong", name: "Chittagong", country: "Bangladesh", lat: 22.3569, lon: 91.7832 },
   { id: "new-york", name: "New York", country: "United States", lat: 40.7128, lon: -74.006 },
   { id: "tokyo", name: "Tokyo", country: "Japan", lat: 35.6762, lon: 139.6503 },
   { id: "sydney", name: "Sydney", country: "Australia", lat: -33.8688, lon: 151.2093 },
+  { id: "paris", name: "Paris", country: "France", lat: 48.8566, lon: 2.3522 },
+  { id: "dubai", name: "Dubai", country: "United Arab Emirates", lat: 25.2048, lon: 55.2708 },
+  { id: "singapore", name: "Singapore", country: "Singapore", lat: 1.3521, lon: 103.8198 },
+  { id: "toronto", name: "Toronto", country: "Canada", lat: 43.6532, lon: -79.3832 },
 ];
 
 export function LocationSearch() {
@@ -51,6 +57,9 @@ export function LocationSearch() {
           <TextInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && matches[0]) choose(matches[0]);
+            }}
             placeholder="Search city"
             className="pl-9"
           />
@@ -77,6 +86,11 @@ export function LocationSearch() {
               <span className="block text-xs text-slate-400">{item.country}</span>
             </button>
           ))}
+          {!matches.length ? (
+            <div className="rounded-xl border border-white/12 bg-white/8 px-3 py-2 text-sm font-medium text-slate-300">
+              No saved city match. Try Dhaka, London, New York, Tokyo, Paris, Dubai, or Sydney.
+            </div>
+          ) : null}
         </div>
       ) : null}
       {recent.length ? (

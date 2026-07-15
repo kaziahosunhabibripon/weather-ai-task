@@ -6,6 +6,8 @@ export const coordinatesSchema = z.object({
   units: z.enum(["metric", "imperial"]).default("metric"),
   days: z.coerce.number().int().min(1).max(7).default(7),
   ai: z.coerce.boolean().default(false),
+  name: z.string().optional(),
+  country: z.string().optional(),
   simulate: z.string().optional(),
 });
 

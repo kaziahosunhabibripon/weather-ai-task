@@ -34,14 +34,32 @@ function conditionFromCode(code: unknown) {
   return "Variable conditions";
 }
 
+function fallbackAiSummary(location: LocationOption, current: WeatherPayload["current"], daily: WeatherPayload["daily"]) {
+  const rainToday = daily[0]?.rainProbability ?? current.rainfall;
+  const rainLevel = rainToday > 10 ? "moderate" : rainToday > 0 ? "low" : "minimal";
+
+  return {
+    overview: `${location.name} is seeing ${current.condition.toLowerCase()} with a current temperature of ${current.temperature}.`,
+    activityAdvice: rainToday > 10 ? "Keep outdoor plans flexible and carry rain protection." : "Outdoor work looks manageable with normal heat and hydration planning.",
+    rainRisk: `Rain risk is ${rainLevel} based on the current forecast signal.`,
+    agriculture: rainToday > 10 ? "Soil moisture may improve; delay spraying during rain windows." : "Irrigation planning should continue normally unless local soil is already saturated.",
+    safety: current.windSpeed > 25 ? "Watch for gusty wind exposure in open areas." : "No major weather safety warning is indicated from the current feed.",
+  };
+}
+
 export async function fetchWeather(params: {
   lat: number;
   lon: number;
   units: WeatherUnits;
   days: number;
   ai: boolean;
+  name?: string;
+  country?: string;
 }): Promise<WeatherPayload> {
   const location: LocationOption =
+    params.name
+      ? { id: params.name.toLowerCase().replace(/\s+/g, "-"), name: params.name, country: params.country ?? "Selected", lat: params.lat, lon: params.lon }
+      :
     presets.find((item) => Math.abs(item.lat - params.lat) < 0.1 && Math.abs(item.lon - params.lon) < 0.1) ??
     { id: "custom", name: "Selected location", country: "Custom", lat: params.lat, lon: params.lon };
 
@@ -73,35 +91,38 @@ export async function fetchWeather(params: {
 
   const raw = await response.json();
   const now = new Date().toISOString();
+  const current: WeatherPayload["current"] = {
+    temperature: raw.current?.temperature ?? raw.temperature ?? 0,
+    feelsLike: raw.current?.feels_like ?? raw.current?.feelsLike ?? raw.current?.temperature ?? 0,
+    humidity: raw.current?.humidity ?? 0,
+    windSpeed: raw.current?.wind_speed ?? raw.current?.windSpeed ?? raw.current?.windspeed ?? 0,
+    rainfall: raw.current?.rainfall ?? raw.current?.rain ?? raw.current?.precipitation ?? 0,
+    condition: raw.current?.condition ?? raw.condition ?? conditionFromCode(raw.current?.weathercode),
+    updatedAt: raw.current?.updated_at ?? raw.current?.time ?? now,
+  };
+  const hourly = (raw.hourly ?? []).slice(0, 24).map((item: Record<string, unknown>) => ({
+    time: String(item.time),
+    temperature: Number(item.temperature ?? item.temp ?? 0),
+    rainfall: Number(item.rainfall ?? item.rain ?? item.precipitation ?? 0),
+    humidity: Number(item.humidity ?? 0),
+    windSpeed: Number(item.wind_speed ?? item.windSpeed ?? item.windspeed ?? 0),
+  }));
+  const daily = (raw.daily ?? []).slice(0, 7).map((item: Record<string, unknown>) => ({
+    date: String(item.date),
+    minTemp: Number(item.min_temp ?? item.minTemp ?? item.temp_min ?? 0),
+    maxTemp: Number(item.max_temp ?? item.maxTemp ?? item.temp_max ?? 0),
+    rainProbability: Number(item.rain_probability ?? item.rainProbability ?? item.precipitation ?? 0),
+    humidity: Number(item.humidity ?? 0),
+    windSpeed: Number(item.wind_speed ?? item.windSpeed ?? item.windspeed ?? 0),
+    condition: String(item.condition ?? conditionFromCode(item.weathercode)),
+  }));
 
   return {
     location,
-    current: {
-      temperature: raw.current?.temperature ?? raw.temperature ?? 0,
-      feelsLike: raw.current?.feels_like ?? raw.current?.feelsLike ?? raw.current?.temperature ?? 0,
-      humidity: raw.current?.humidity ?? 0,
-      windSpeed: raw.current?.wind_speed ?? raw.current?.windSpeed ?? raw.current?.windspeed ?? 0,
-      rainfall: raw.current?.rainfall ?? raw.current?.rain ?? raw.current?.precipitation ?? 0,
-      condition: raw.current?.condition ?? raw.condition ?? conditionFromCode(raw.current?.weathercode),
-      updatedAt: raw.current?.updated_at ?? raw.current?.time ?? now,
-    },
-    hourly: (raw.hourly ?? []).slice(0, 24).map((item: Record<string, unknown>) => ({
-      time: String(item.time),
-      temperature: Number(item.temperature ?? item.temp ?? 0),
-      rainfall: Number(item.rainfall ?? item.rain ?? item.precipitation ?? 0),
-      humidity: Number(item.humidity ?? 0),
-      windSpeed: Number(item.wind_speed ?? item.windSpeed ?? item.windspeed ?? 0),
-    })),
-    daily: (raw.daily ?? []).slice(0, 7).map((item: Record<string, unknown>) => ({
-      date: String(item.date),
-      minTemp: Number(item.min_temp ?? item.minTemp ?? item.temp_min ?? 0),
-      maxTemp: Number(item.max_temp ?? item.maxTemp ?? item.temp_max ?? 0),
-      rainProbability: Number(item.rain_probability ?? item.rainProbability ?? item.precipitation ?? 0),
-      humidity: Number(item.humidity ?? 0),
-      windSpeed: Number(item.wind_speed ?? item.windSpeed ?? item.windspeed ?? 0),
-      condition: String(item.condition ?? conditionFromCode(item.weathercode)),
-    })),
-    aiSummary: raw.ai_summary ?? raw.aiSummary,
+    current,
+    hourly,
+    daily,
+    aiSummary: raw.ai_summary ?? raw.aiSummary ?? (params.ai ? fallbackAiSummary(location, current, daily) : undefined),
     meta: {
       dataSource: "live",
       cacheAgeSeconds: 0,

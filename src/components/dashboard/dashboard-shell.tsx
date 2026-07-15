@@ -33,8 +33,15 @@ export function DashboardShell() {
   const [aiWeather, setAiWeather] = useState<ReturnType<typeof useGetWeatherQuery>["data"]>();
   const unitLabel = units === "metric" ? "C" : "F";
   const queryArgs = useMemo(
-    () => ({ lat: selectedLocation.lat, lon: selectedLocation.lon, units, simulate: simulation }),
-    [selectedLocation.lat, selectedLocation.lon, units, simulation],
+    () => ({
+      lat: selectedLocation.lat,
+      lon: selectedLocation.lon,
+      units,
+      name: selectedLocation.name,
+      country: selectedLocation.country,
+      simulate: simulation,
+    }),
+    [selectedLocation.country, selectedLocation.lat, selectedLocation.lon, selectedLocation.name, units, simulation],
   );
 
   const weatherQuery = useGetWeatherQuery(queryArgs, { pollingInterval: refreshSeconds * 1000 });

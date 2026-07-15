@@ -10,11 +10,11 @@ export const weatherApi = createApi({
   endpoints: (builder) => ({
     getWeather: builder.query<
       WeatherPayload & { warning?: { code: string; message: string } },
-      { lat: number; lon: number; units: WeatherUnits; ai?: boolean; simulate?: string }
+      { lat: number; lon: number; units: WeatherUnits; name?: string; country?: string; ai?: boolean; simulate?: string }
     >({
-      query: ({ lat, lon, units, ai = false, simulate = "none" }) => ({
+      query: ({ lat, lon, units, name, country, ai = false, simulate = "none" }) => ({
         url: "weather",
-        params: { lat, lon, units, days: 7, ai, ...(simulate !== "none" ? { simulate } : {}) },
+        params: { lat, lon, units, days: 7, ai, name, country, ...(simulate !== "none" ? { simulate } : {}) },
       }),
       providesTags: ["Weather"],
     }),
