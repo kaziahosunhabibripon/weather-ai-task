@@ -120,11 +120,14 @@ export function LocationSearch() {
             >
               <span className="font-semibold text-white">{item.name}</span>
               <span className="block text-xs text-slate-400">{item.country}</span>
+              <span className="mt-1 block font-mono text-[11px] text-sky-300">
+                {item.lat.toFixed(4)}, {item.lon.toFixed(4)}
+              </span>
             </button>
           ))}
           {isGlobalSearchEnabled && isSearching ? (
             <div className="rounded-xl border border-white/12 bg-white/8 px-3 py-2 text-sm font-medium text-slate-300">
-              Searching global cities...
+              Searching locations...
             </div>
           ) : null}
           {!matches.length && !isSearching ? (

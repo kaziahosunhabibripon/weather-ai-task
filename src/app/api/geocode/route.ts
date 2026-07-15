@@ -15,6 +15,12 @@ const localFallbacks: GeocodeResult[] = [
   { id: "rajshahi-bd", name: "Rajshahi", country: "Bangladesh", lat: 24.3745, lon: 88.6042 },
   { id: "sylhet-bd", name: "Sylhet", country: "Bangladesh", lat: 24.8949, lon: 91.8687 },
   { id: "khulna-bd", name: "Khulna", country: "Bangladesh", lat: 22.8456, lon: 89.5403 },
+  { id: "mirpur-10-dhaka-bd", name: "Mirpur 10", country: "Dhaka, Bangladesh", lat: 23.8069, lon: 90.3687 },
+  { id: "uttara-dhaka-bd", name: "Uttara", country: "Dhaka, Bangladesh", lat: 23.8759, lon: 90.3795 },
+  { id: "dhanmondi-dhaka-bd", name: "Dhanmondi", country: "Dhaka, Bangladesh", lat: 23.7461, lon: 90.3742 },
+  { id: "gulshan-dhaka-bd", name: "Gulshan", country: "Dhaka, Bangladesh", lat: 23.7925, lon: 90.4078 },
+  { id: "banani-dhaka-bd", name: "Banani", country: "Dhaka, Bangladesh", lat: 23.7937, lon: 90.4043 },
+  { id: "bashundhara-dhaka-bd", name: "Bashundhara", country: "Dhaka, Bangladesh", lat: 23.8193, lon: 90.4522 },
 ];
 
 export async function GET(request: Request) {
@@ -29,8 +35,10 @@ export async function GET(request: Request) {
     const haystack = `${item.name} ${item.country}`.toLowerCase();
     return query.toLowerCase().split(/\s+/).every((word) => haystack.includes(word));
   });
-  const cityResults = await searchCities(query);
-  const addressResults = await searchAddresses(query);
+  const [cityResults, addressResults] = await Promise.all([
+    searchCities(query).catch(() => []),
+    searchAddresses(query).catch(() => []),
+  ]);
   const merged = [...fallbackResults, ...cityResults, ...addressResults].filter(
     (item, index, list) => list.findIndex((match) => Math.abs(match.lat - item.lat) < 0.001 && Math.abs(match.lon - item.lon) < 0.001) === index,
   );
@@ -77,8 +85,23 @@ async function searchAddresses(query: string): Promise<GeocodeResult[]> {
   const data = await response.json();
   return (data ?? []).map((item: Record<string, unknown>) => {
     const address = (item.address ?? {}) as Record<string, unknown>;
-    const name = String(item.name || address.city || address.town || address.village || address.county || item.display_name || "Selected address");
-    const country = [address.state, address.country].filter(Boolean).join(", ") || String(item.display_name ?? "Address result");
+    const displayName = String(item.display_name ?? "");
+    const displayParts = displayName.split(",").map((part) => part.trim()).filter(Boolean);
+    const name = String(
+      item.name ||
+        address.road ||
+        address.neighbourhood ||
+        address.suburb ||
+        address.city ||
+        address.town ||
+        address.village ||
+        displayParts.slice(0, 2).join(", ") ||
+        "Selected address",
+    );
+    const country =
+      [address.suburb, address.city || address.town || address.village, address.state, address.country]
+        .filter(Boolean)
+        .join(", ") || displayParts.slice(1, 5).join(", ") || "Address result";
 
     return {
       id: String(item.place_id ?? `${item.lat}-${item.lon}`),
