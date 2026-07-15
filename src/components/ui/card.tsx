@@ -1,0 +1,22 @@
+import { cn } from "@/lib/utils";
+
+export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <section
+      className={cn(
+        "rounded-2xl border border-white/10 bg-white/[0.075] p-5 text-slate-100 shadow-2xl shadow-black/20 backdrop-blur-xl",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function CardTitle({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div className="mb-4 flex min-h-8 items-center justify-between gap-3">
+      <h2 className="text-base font-semibold text-slate-50">{children}</h2>
+      {action}
+    </div>
+  );
+}
