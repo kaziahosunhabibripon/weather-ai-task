@@ -70,11 +70,11 @@ export function LocationSearch() {
             <button
               key={item.id}
               onClick={() => choose(item)}
-              className="rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-left text-sm hover:bg-white"
+              className="rounded-xl border border-white/12 bg-white/8 px-3 py-2 text-left text-sm hover:bg-white/12"
               type="button"
             >
-              <span className="font-semibold text-slate-950">{item.name}</span>
-              <span className="block text-xs text-slate-600">{item.country}</span>
+              <span className="font-semibold text-white">{item.name}</span>
+              <span className="block text-xs text-slate-400">{item.country}</span>
             </button>
           ))}
         </div>
@@ -82,7 +82,7 @@ export function LocationSearch() {
       {recent.length ? (
         <div className="flex flex-wrap gap-2 text-xs">
           {recent.map((item) => (
-            <button key={item.id} onClick={() => choose(item)} className="rounded-lg bg-slate-100 px-2 py-1 font-medium text-slate-700" type="button">
+            <button key={item.id} onClick={() => choose(item)} className="rounded-lg bg-white/10 px-2 py-1 font-medium text-slate-200" type="button">
               {item.name}
             </button>
           ))}

@@ -4,7 +4,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return (
     <section
       className={cn(
-        "rounded-2xl border border-white/70 bg-white/72 p-5 text-slate-900 shadow-xl shadow-slate-900/8 backdrop-blur-xl",
+        "rounded-2xl border border-white/12 bg-slate-950/72 p-5 text-slate-100 shadow-2xl shadow-black/25 backdrop-blur-xl",
         className,
       )}
       {...props}
@@ -15,7 +15,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 export function CardTitle({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
   return (
     <div className="mb-4 flex min-h-8 items-center justify-between gap-3">
-      <h2 className="text-base font-bold text-slate-950">{children}</h2>
+      <h2 className="text-base font-bold text-white">{children}</h2>
       {action}
     </div>
   );

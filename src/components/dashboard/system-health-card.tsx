@@ -24,11 +24,11 @@ export function SystemHealthCard({ weather, warning }: { weather: WeatherPayload
       ) : null}
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map((item) => (
-          <div key={item.label} className="flex min-h-16 items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 p-3">
-            <item.icon className="h-4 w-4 text-sky-600" />
+          <div key={item.label} className="flex min-h-16 items-center gap-3 rounded-2xl border border-white/12 bg-white/8 p-3">
+            <item.icon className="h-4 w-4 text-sky-300" />
             <div>
-              <p className="text-xs font-medium text-slate-600">{item.label}</p>
-              <p className="text-sm font-bold capitalize text-slate-950">{item.value}</p>
+              <p className="text-xs font-medium text-slate-400">{item.label}</p>
+              <p className="text-sm font-bold capitalize text-white">{item.value}</p>
             </div>
           </div>
         ))}
