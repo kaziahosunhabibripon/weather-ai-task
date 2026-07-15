@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050816;
+  --background: #111827;
   --foreground: #f8fafc;
 }
 
@@ -24,10 +24,10 @@ body::before {
   z-index: -1;
   content: "";
   background:
-    radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.22), transparent 28rem),
-    radial-gradient(circle at 82% 12%, rgba(59, 130, 246, 0.18), transparent 24rem),
-    radial-gradient(circle at 48% 92%, rgba(20, 184, 166, 0.12), transparent 28rem),
-    linear-gradient(145deg, #030712 0%, #08111f 46%, #101827 100%);
+    radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.2), transparent 28rem),
+    radial-gradient(circle at 82% 12%, rgba(59, 130, 246, 0.16), transparent 24rem),
+    radial-gradient(circle at 48% 92%, rgba(20, 184, 166, 0.1), transparent 28rem),
+    linear-gradient(145deg, #111827 0%, #172033 48%, #1f2937 100%);
 }
 
 button,
