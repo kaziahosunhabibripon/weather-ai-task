@@ -17,11 +17,6 @@ export function SystemHealthCard({ weather, warning }: { weather: WeatherPayload
   return (
     <Card>
       <CardTitle>System Health</CardTitle>
-      {warning ? (
-        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-900">
-          {warning.code}: {warning.message}
-        </div>
-      ) : null}
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map((item) => (
           <div key={item.label} className="flex min-h-16 items-center gap-3 rounded-2xl border border-white/12 bg-white/8 p-3">

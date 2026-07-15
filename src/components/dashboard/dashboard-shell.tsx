@@ -7,10 +7,10 @@ import { LocationSearch } from "@/components/location/location-search";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { FieldLabel, SelectControl } from "@/components/ui/field";
-import { useGetUsageQuery, useGetWeatherQuery, useLazyGetWeatherQuery } from "@/store/api/weather-api";
+import { Toast, type ToastState } from "@/components/ui/toast";
+import { useGetUsageQuery, useGetWeatherQuery } from "@/store/api/weather-api";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSimulation, setUnits } from "@/store/slices/preferences-slice";
-import { AiSummaryCard } from "./ai-summary-card";
 import { CurrentWeatherCard } from "./current-weather-card";
 import { DailyForecast } from "./daily-forecast";
 import { HourlyChart } from "./hourly-chart";
@@ -27,10 +27,21 @@ const simulations = [
   ["offline", "Network offline"],
 ];
 
+function getErrorMessage(error: unknown) {
+  if (typeof error === "object" && error && "data" in error) {
+    const data = (error as { data?: unknown }).data;
+    if (typeof data === "object" && data && "message" in data) {
+      return String((data as { message: unknown }).message);
+    }
+  }
+
+  return "Please check the selected location, API status, or simulation mode.";
+}
+
 export function DashboardShell() {
   const dispatch = useAppDispatch();
   const { selectedLocation, units, refreshSeconds, simulation } = useAppSelector((state) => state.preferences);
-  const [aiWeather, setAiWeather] = useState<ReturnType<typeof useGetWeatherQuery>["data"]>();
+  const [dismissedToastKey, setDismissedToastKey] = useState("");
   const unitLabel = units === "metric" ? "C" : "F";
   const queryArgs = useMemo(
     () => ({
@@ -46,17 +57,28 @@ export function DashboardShell() {
 
   const weatherQuery = useGetWeatherQuery(queryArgs, { pollingInterval: refreshSeconds * 1000 });
   const usageQuery = useGetUsageQuery(undefined, { pollingInterval: 30_000 });
-  const [generateInsight, insightQuery] = useLazyGetWeatherQuery();
 
-  const weather = aiWeather ?? weatherQuery.data;
-
-  async function onGenerateAi() {
-    const result = await generateInsight({ ...queryArgs, ai: true }).unwrap();
-    setAiWeather(result);
-  }
+  const weather = weatherQuery.data;
+  const alertToast: ToastState | null = weather?.warning
+    ? {
+        title: weather.warning.code.replaceAll("_", " "),
+        message: weather.warning.message,
+        tone: "warning",
+      }
+    : weatherQuery.error
+      ? {
+          title: "Weather request failed",
+          message: getErrorMessage(weatherQuery.error),
+          tone: "error",
+        }
+      : null;
+  const alertToastKey = alertToast ? `${alertToast.title}:${alertToast.message}` : "";
 
   return (
     <main className="min-h-screen text-slate-100">
+      {alertToast && alertToastKey !== dismissedToastKey ? (
+        <Toast toast={alertToast} onClose={() => setDismissedToastKey(alertToastKey)} />
+      ) : null}
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
         <header className="flex flex-col gap-4 rounded-2xl border border-white/12 bg-slate-950/70 p-4 shadow-2xl shadow-black/25 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
@@ -120,7 +142,7 @@ export function DashboardShell() {
             </Card>
 
             {weatherQuery.isLoading ? <Card>Loading weather data...</Card> : null}
-            {weatherQuery.error ? <Card className="border-red-200 bg-red-50 text-red-900">Weather request failed. Try a cached location or clear simulation.</Card> : null}
+            {weatherQuery.error ? <Card className="border-red-400/30 bg-red-500/10 text-red-100">Weather request failed. Try a cached location or clear simulation.</Card> : null}
             {weather ? (
               <>
                 <CurrentWeatherCard weather={weather} unitLabel={unitLabel} />
@@ -132,7 +154,6 @@ export function DashboardShell() {
           <aside className="space-y-5">
             {usageQuery.data ? <UsageCard usage={usageQuery.data} /> : <Card>Loading usage...</Card>}
             {weather ? <SystemHealthCard weather={weather} warning={weather.warning} /> : null}
-            {weather ? <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} /> : null}
           </aside>
         </section>
         {weather ? <DailyForecast daily={weather.daily} unitLabel={unitLabel} /> : null}
