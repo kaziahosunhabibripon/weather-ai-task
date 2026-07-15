@@ -15,10 +15,10 @@ export function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
         <div className="h-72 min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-              <XAxis dataKey="label" minTickGap={32} stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, color: "#f8fafc" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,23,42,0.1)" />
+              <XAxis dataKey="label" minTickGap={32} stroke="#475569" />
+              <YAxis stroke="#475569" />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, color: "#0f172a" }} />
               <Legend />
               <Line type="monotone" dataKey="temperature" stroke="#facc15" strokeWidth={3} dot={false} />
               <Line type="monotone" dataKey="humidity" stroke="#38bdf8" strokeWidth={2} dot={false} />
@@ -29,10 +29,10 @@ export function HourlyChart({ hourly }: { hourly: HourlyPoint[] }) {
         <div className="h-72 min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-              <XAxis dataKey="label" minTickGap={32} stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, color: "#f8fafc" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,23,42,0.1)" />
+              <XAxis dataKey="label" minTickGap={32} stroke="#475569" />
+              <YAxis stroke="#475569" />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, color: "#0f172a" }} />
               <Legend />
               <Bar dataKey="rainfall" fill="#38bdf8" radius={[6, 6, 0, 0]} />
             </BarChart>

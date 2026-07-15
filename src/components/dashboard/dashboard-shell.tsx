@@ -4,7 +4,9 @@ import { Bell, CloudSun, RefreshCw, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { LocationPresets } from "@/components/location/location-presets";
 import { LocationSearch } from "@/components/location/location-search";
+import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { FieldLabel, SelectControl } from "@/components/ui/field";
 import { useGetUsageQuery, useGetWeatherQuery, useLazyGetWeatherQuery } from "@/store/api/weather-api";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSimulation, setUnits } from "@/store/slices/preferences-slice";
@@ -47,34 +49,33 @@ export function DashboardShell() {
   }
 
   return (
-    <main className="min-h-screen text-slate-100">
+    <main className="min-h-screen text-slate-900">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/20 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
+        <header className="flex flex-col gap-4 rounded-2xl border border-white/70 bg-white/75 p-4 shadow-xl shadow-slate-900/10 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-sky-400/15 text-sky-300">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-sky-100 text-sky-600">
               <CloudSun className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase text-sky-300">WeatherOps</p>
-              <h1 className="mt-0.5 text-xl font-semibold tracking-normal text-white sm:text-2xl">Weather monitoring console</h1>
+              <p className="text-xs font-bold uppercase text-sky-600">WeatherOps</p>
+              <h1 className="mt-0.5 text-xl font-bold tracking-normal text-slate-950 sm:text-2xl">Weather monitoring console</h1>
             </div>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="hidden h-10 min-w-72 items-center gap-2 rounded-xl border border-white/10 bg-white/8 px-3 text-sm text-slate-400 lg:flex">
+            <div className="hidden h-10 min-w-72 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-500 lg:flex">
               <Search className="h-4 w-4" />
               Search city from controls
             </div>
-            <button className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/8 text-slate-200" type="button" title="Notifications">
+            <Button variant="icon" title="Notifications" className="px-0">
               <Bell className="h-4 w-4" />
-            </button>
-          <button
+            </Button>
+          <Button
+            variant="primary"
             onClick={() => weatherQuery.refetch()}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-lime-400 px-4 text-sm font-semibold text-slate-950 shadow-lg shadow-lime-400/20"
-            type="button"
           >
             <RefreshCw className="h-4 w-4" />
             Manual refresh
-          </button>
+          </Button>
           </div>
         </header>
 
@@ -88,33 +89,31 @@ export function DashboardShell() {
                   <LocationPresets />
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                  <label className="text-sm font-medium text-slate-300">
+                  <FieldLabel>
                     Units
-                    <select
+                    <SelectControl
                       value={units}
                       onChange={(event) => dispatch(setUnits(event.target.value as "metric" | "imperial"))}
-                      className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-slate-950 px-3 text-sm text-slate-100 outline-none"
                     >
                       <option value="metric">Metric</option>
                       <option value="imperial">Imperial</option>
-                    </select>
-                  </label>
-                  <label className="text-sm font-medium text-slate-300">
+                    </SelectControl>
+                  </FieldLabel>
+                  <FieldLabel>
                     Error simulation
-                    <select
+                    <SelectControl
                       value={simulation}
                       onChange={(event) => dispatch(setSimulation(event.target.value))}
-                      className="mt-1 h-10 w-full rounded-xl border border-white/10 bg-slate-950 px-3 text-sm text-slate-100 outline-none"
                     >
                       {simulations.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                    </select>
-                  </label>
+                    </SelectControl>
+                  </FieldLabel>
                 </div>
               </div>
             </Card>
 
             {weatherQuery.isLoading ? <Card>Loading weather data...</Card> : null}
-            {weatherQuery.error ? <Card className="border-red-400/30 bg-red-500/10 text-red-100">Weather request failed. Try a cached location or clear simulation.</Card> : null}
+            {weatherQuery.error ? <Card className="border-red-200 bg-red-50 text-red-900">Weather request failed. Try a cached location or clear simulation.</Card> : null}
             {weather ? (
               <>
                 <div className="grid gap-5 xl:grid-cols-[380px_minmax(0,1fr)]">
@@ -122,7 +121,6 @@ export function DashboardShell() {
                   <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} />
                 </div>
                 <HourlyChart hourly={weather.hourly} />
-                <DailyForecast daily={weather.daily} unitLabel={unitLabel} />
               </>
             ) : null}
           </div>
@@ -132,6 +130,7 @@ export function DashboardShell() {
             {weather ? <SystemHealthCard weather={weather} warning={weather.warning} /> : null}
           </aside>
         </section>
+        {weather ? <DailyForecast daily={weather.daily} unitLabel={unitLabel} /> : null}
       </div>
     </main>
   );

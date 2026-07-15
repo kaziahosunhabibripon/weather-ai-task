@@ -21,8 +21,8 @@ export function LocationPresets() {
           }}
           className={`inline-flex h-9 items-center gap-2 rounded-xl border px-3 text-sm font-medium ${
             selected.id === preset.id
-              ? "border-sky-300/60 bg-sky-400/15 text-sky-100"
-              : "border-white/10 bg-white/8 text-slate-300 hover:bg-white/12"
+              ? "border-sky-300 bg-sky-100 text-sky-800"
+              : "border-slate-200 bg-white/75 text-slate-700 hover:bg-white"
           }`}
           type="button"
         >

@@ -3,6 +3,8 @@
 import { Crosshair, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { LocationOption } from "@/lib/schemas";
+import { Button } from "@/components/ui/button";
+import { TextInput } from "@/components/ui/field";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setLocation } from "@/store/slices/preferences-slice";
 import { rememberLocation } from "@/store/slices/recent-locations-slice";
@@ -45,22 +47,22 @@ export function LocationSearch() {
     <div className="space-y-3">
       <div className="flex gap-2">
         <label className="relative block flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <TextInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search city"
-            className="h-10 w-full rounded-xl border border-white/10 bg-black/25 pl-9 pr-3 text-sm text-slate-100 outline-none ring-sky-400 placeholder:text-slate-500 focus:ring-2"
+            className="pl-9"
           />
         </label>
-        <button
-          type="button"
+        <Button
+          variant="icon"
           onClick={useBrowserLocation}
           title="Use browser location"
-          className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-black/25 text-slate-200 hover:bg-white/10"
+          className="px-0"
         >
           <Crosshair className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
       {query ? (
         <div className="grid gap-2 sm:grid-cols-2">
@@ -68,11 +70,11 @@ export function LocationSearch() {
             <button
               key={item.id}
               onClick={() => choose(item)}
-              className="rounded-xl border border-white/10 bg-white/8 px-3 py-2 text-left text-sm hover:bg-white/12"
+              className="rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-left text-sm hover:bg-white"
               type="button"
             >
-              <span className="font-medium text-slate-100">{item.name}</span>
-              <span className="block text-xs text-slate-400">{item.country}</span>
+              <span className="font-semibold text-slate-950">{item.name}</span>
+              <span className="block text-xs text-slate-600">{item.country}</span>
             </button>
           ))}
         </div>
@@ -80,7 +82,7 @@ export function LocationSearch() {
       {recent.length ? (
         <div className="flex flex-wrap gap-2 text-xs">
           {recent.map((item) => (
-            <button key={item.id} onClick={() => choose(item)} className="rounded-lg bg-white/10 px-2 py-1 text-slate-300" type="button">
+            <button key={item.id} onClick={() => choose(item)} className="rounded-lg bg-slate-100 px-2 py-1 font-medium text-slate-700" type="button">
               {item.name}
             </button>
           ))}

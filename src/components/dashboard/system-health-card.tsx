@@ -18,17 +18,17 @@ export function SystemHealthCard({ weather, warning }: { weather: WeatherPayload
     <Card>
       <CardTitle>System Health</CardTitle>
       {warning ? (
-        <div className="mb-4 rounded-xl border border-amber-300/30 bg-amber-300/10 p-3 text-sm text-amber-100">
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-900">
           {warning.code}: {warning.message}
         </div>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map((item) => (
-          <div key={item.label} className="flex min-h-16 items-center gap-3 rounded-2xl border border-white/10 bg-black/20 p-3">
-            <item.icon className="h-4 w-4 text-sky-300" />
+          <div key={item.label} className="flex min-h-16 items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 p-3">
+            <item.icon className="h-4 w-4 text-sky-600" />
             <div>
-              <p className="text-xs text-slate-400">{item.label}</p>
-              <p className="text-sm font-semibold capitalize text-slate-100">{item.value}</p>
+              <p className="text-xs font-medium text-slate-600">{item.label}</p>
+              <p className="text-sm font-bold capitalize text-slate-950">{item.value}</p>
             </div>
           </div>
         ))}
