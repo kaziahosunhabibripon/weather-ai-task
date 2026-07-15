@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CloudSun, RefreshCw, Search } from "lucide-react";
+import { Bell, CloudSun, RefreshCw, Search, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { LocationPresets } from "@/components/location/location-presets";
 import { LocationSearch } from "@/components/location/location-search";
@@ -125,10 +125,24 @@ export function DashboardShell() {
           <aside className="space-y-5">
             {usageQuery.data ? <UsageCard usage={usageQuery.data} /> : <Card>Loading usage...</Card>}
             {weather ? <SystemHealthCard weather={weather} warning={weather.warning} /> : null}
-            {weather ? <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} /> : null}
           </aside>
         </section>
-        {weather ? <DailyForecast daily={weather.daily} unitLabel={unitLabel} /> : null}
+        {weather ? (
+          <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <DailyForecast daily={weather.daily} unitLabel={unitLabel} />
+            <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} />
+          </section>
+        ) : null}
+        <footer className="rounded-2xl border border-white/12 bg-slate-950/60 px-5 py-4 text-sm text-slate-400 shadow-xl shadow-black/20 backdrop-blur-xl">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-sky-300" />
+              <span className="font-semibold text-slate-200">WeatherOps Dashboard</span>
+              <span>API usage, cache health, and weather intelligence console.</span>
+            </div>
+            <span>Built with Next.js, RTK Query, Recharts, and WeatherAI.</span>
+          </div>
+        </footer>
       </div>
     </main>
   );
