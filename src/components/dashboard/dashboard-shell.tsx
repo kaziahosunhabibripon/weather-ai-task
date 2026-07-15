@@ -116,10 +116,7 @@ export function DashboardShell() {
             {weatherQuery.error ? <Card className="border-red-200 bg-red-50 text-red-900">Weather request failed. Try a cached location or clear simulation.</Card> : null}
             {weather ? (
               <>
-                <div className="grid gap-5 xl:grid-cols-[380px_minmax(0,1fr)]">
-                  <CurrentWeatherCard weather={weather} unitLabel={unitLabel} />
-                  <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} />
-                </div>
+                <CurrentWeatherCard weather={weather} unitLabel={unitLabel} />
                 <HourlyChart hourly={weather.hourly} />
               </>
             ) : null}
@@ -128,6 +125,7 @@ export function DashboardShell() {
           <aside className="space-y-5">
             {usageQuery.data ? <UsageCard usage={usageQuery.data} /> : <Card>Loading usage...</Card>}
             {weather ? <SystemHealthCard weather={weather} warning={weather.warning} /> : null}
+            {weather ? <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} /> : null}
           </aside>
         </section>
         {weather ? <DailyForecast daily={weather.daily} unitLabel={unitLabel} /> : null}
