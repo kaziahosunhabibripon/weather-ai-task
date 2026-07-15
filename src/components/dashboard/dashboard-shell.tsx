@@ -93,7 +93,7 @@ export function DashboardShell() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="hidden h-10 min-w-72 items-center gap-2 rounded-xl border border-white/12 bg-slate-950/80 px-3 text-sm font-medium text-slate-400 lg:flex">
               <Search className="h-4 w-4" />
-              Search city from controls
+              Search city or address
             </div>
             <Button variant="icon" title="Notifications" className="px-0">
               <Bell className="h-4 w-4" />

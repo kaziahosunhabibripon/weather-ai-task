@@ -96,7 +96,7 @@ export function LocationSearch() {
             onKeyDown={(event) => {
               if (event.key === "Enter" && matches[0]) choose(matches[0]);
             }}
-            placeholder="Search city"
+            placeholder="Search city or address"
             className="pl-9"
           />
         </label>
@@ -129,7 +129,7 @@ export function LocationSearch() {
           ) : null}
           {!matches.length && !isSearching ? (
             <div className="rounded-xl border border-white/12 bg-white/8 px-3 py-2 text-sm font-medium text-slate-300">
-              No city match found. Try a city name with district/country, for example Dinajpur Bangladesh.
+              No location match found. Try a city, area, or full address with country.
             </div>
           ) : null}
         </div>

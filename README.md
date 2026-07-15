@@ -54,8 +54,17 @@ Then set:
 
 ```bash
 WEATHERAI_API_KEY=your_key_here
-WEATHERAI_BASE_URL=https://api.weatherai.com
+WEATHERAI_BASE_URL=https://api.weather-ai.co
 ```
+
+WeatherAI expects the key as a Bearer token request header:
+
+```bash
+curl "https://api.weather-ai.co/v1/weather?lat=-1.2921&lon=36.8219" \
+  -H "Authorization: Bearer wai_your_key_here"
+```
+
+In this app, keep only the raw `wai_...` key in `.env.local`; the server route adds `Authorization: Bearer ...` automatically.
 
 ## Run
 

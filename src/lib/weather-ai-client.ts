@@ -2,7 +2,7 @@ import { errorCodeFromStatus, errorMessage } from "./errors";
 import { buildMockUsage, buildMockWeather, presets } from "./mock-data";
 import type { LocationOption, UsagePayload, WeatherPayload, WeatherUnits } from "./schemas";
 
-const API_BASE = process.env.WEATHERAI_BASE_URL ?? "https://api.weatherai.com";
+const API_BASE = process.env.WEATHERAI_BASE_URL ?? "https://api.weather-ai.co";
 const API_KEY = process.env.WEATHERAI_API_KEY;
 
 export class WeatherApiError extends Error {
@@ -69,8 +69,8 @@ export async function fetchWeather(params: {
   let response: Response | null = null;
 
   for (const coordinateNames of [
-    ["latitude", "longitude"],
     ["lat", "lon"],
+    ["latitude", "longitude"],
   ] as const) {
     const url = new URL("/v1/weather", API_BASE);
     url.searchParams.set(coordinateNames[0], String(params.lat));
