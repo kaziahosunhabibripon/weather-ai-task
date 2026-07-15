@@ -65,6 +65,8 @@ export type WeatherPayload = {
     latencyMs: number;
     retryCount: number;
     freshness: "fresh" | "stale" | "fallback";
+    lastSuccessfulFetch: string | null;
+    lastFailedFetch: string | null;
     rateLimit: {
       limit: number | null;
       remaining: number | null;

@@ -2,7 +2,12 @@
 
 import { AlertTriangle, CheckCircle2, Clock, Database, RadioTower } from "lucide-react";
 import type { WeatherPayload } from "@/lib/schemas";
+import { formatTime } from "@/lib/utils";
 import { Card, CardTitle } from "../ui/card";
+
+function shortTime(value: string | null) {
+  return value ? formatTime(value) : "n/a";
+}
 
 export function SystemHealthCard({ weather, warning }: { weather: WeatherPayload; warning?: { code: string; message: string } }) {
   const items = [
@@ -12,6 +17,8 @@ export function SystemHealthCard({ weather, warning }: { weather: WeatherPayload
     { label: "Retry count", value: weather.meta.retryCount, icon: RadioTower },
     { label: "Rate limit remaining", value: weather.meta.rateLimit.remaining ?? "n/a", icon: RadioTower },
     { label: "Freshness", value: weather.meta.freshness, icon: CheckCircle2 },
+    { label: "Last success", value: shortTime(weather.meta.lastSuccessfulFetch), icon: CheckCircle2 },
+    { label: "Last failure", value: shortTime(weather.meta.lastFailedFetch), icon: AlertTriangle },
   ];
 
   return (

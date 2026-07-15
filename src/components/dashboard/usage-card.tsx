@@ -7,6 +7,9 @@ import { Card, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
 
 export function UsageCard({ usage }: { usage: UsagePayload }) {
+  const requestsRemaining = Math.max(0, usage.requestsLimit - usage.requestsUsed);
+  const aiRequestsRemaining = Math.max(0, usage.aiRequestsLimit - usage.aiRequestsUsed);
+
   return (
     <Card>
       <CardTitle action={<span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase text-slate-300">{usage.meta.dataSource}</span>}>
@@ -28,6 +31,7 @@ export function UsageCard({ usage }: { usage: UsagePayload }) {
             <span>{usage.requestsUsed} / {usage.requestsLimit}</span>
           </div>
           <Progress value={percent(usage.requestsUsed, usage.requestsLimit)} />
+          <p className="mt-1 text-xs font-medium text-slate-400">{requestsRemaining} remaining</p>
         </div>
         <div>
           <div className="mb-2 flex justify-between text-sm font-medium text-slate-300">
@@ -35,6 +39,7 @@ export function UsageCard({ usage }: { usage: UsagePayload }) {
             <span>{usage.aiRequestsUsed} / {usage.aiRequestsLimit}</span>
           </div>
           <Progress value={percent(usage.aiRequestsUsed, usage.aiRequestsLimit)} />
+          <p className="mt-1 text-xs font-medium text-slate-400">{aiRequestsRemaining} remaining</p>
         </div>
       </div>
       <p className="mt-5 text-xs font-medium text-slate-400">Billing period ends {formatDate(usage.billingPeriodEnd)}</p>

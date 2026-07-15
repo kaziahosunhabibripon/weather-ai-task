@@ -57,6 +57,8 @@ export function buildMockWeather(location: LocationOption, units: WeatherUnits, 
       latencyMs: 42,
       retryCount: 0,
       freshness: "fresh",
+      lastSuccessfulFetch: now.toISOString(),
+      lastFailedFetch: null,
       rateLimit: { limit: 1000, remaining: 918, reset: null },
     },
   };

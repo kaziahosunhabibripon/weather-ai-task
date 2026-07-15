@@ -16,6 +16,9 @@ const simulationStatus: Record<string, number> = {
   offline: 0,
 };
 
+let lastSuccessfulFetch: string | null = null;
+let lastFailedFetch: string | null = null;
+
 export async function GET(request: Request) {
   const startedAt = performance.now();
   const parsed = coordinatesSchema.safeParse(Object.fromEntries(new URL(request.url).searchParams));
@@ -34,6 +37,7 @@ export async function GET(request: Request) {
 
   if (simulatedStatus !== undefined) {
     const code: ApiErrorCode = simulatedStatus === 0 ? "NETWORK_OFFLINE" : errorCodeFromStatus(simulatedStatus);
+    lastFailedFetch = new Date().toISOString();
     if (cached) {
       return NextResponse.json({
         ...cached.value,
@@ -43,6 +47,8 @@ export async function GET(request: Request) {
           cacheAgeSeconds: cached.ageSeconds,
           latencyMs: Math.round(performance.now() - startedAt),
           freshness: "fallback",
+          lastSuccessfulFetch,
+          lastFailedFetch,
         },
         warning: { code, message: errorMessage(code) },
       });
@@ -60,19 +66,23 @@ export async function GET(request: Request) {
         cacheAgeSeconds: cached.ageSeconds,
         latencyMs: Math.round(performance.now() - startedAt),
         freshness: "fresh",
+        lastSuccessfulFetch,
+        lastFailedFetch,
       },
     });
   }
 
   try {
     const weather = await fetchWeather(params);
+    lastSuccessfulFetch = new Date().toISOString();
     const payload = {
       ...weather,
-      meta: { ...weather.meta, latencyMs: Math.round(performance.now() - startedAt) },
+      meta: { ...weather.meta, latencyMs: Math.round(performance.now() - startedAt), lastSuccessfulFetch, lastFailedFetch },
     };
     setCache(key, payload, params.ai ? AI_TTL : WEATHER_TTL);
     return NextResponse.json(payload);
   } catch (error) {
+    lastFailedFetch = new Date().toISOString();
     if (cached) {
       return NextResponse.json({
         ...cached.value,
@@ -82,6 +92,8 @@ export async function GET(request: Request) {
           cacheAgeSeconds: cached.ageSeconds,
           latencyMs: Math.round(performance.now() - startedAt),
           freshness: "fallback",
+          lastSuccessfulFetch,
+          lastFailedFetch,
         },
       });
     }

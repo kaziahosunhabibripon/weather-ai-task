@@ -129,6 +129,8 @@ export async function fetchWeather(params: {
       latencyMs: Math.round(performance.now() - startedAt),
       retryCount: 0,
       freshness: "fresh",
+      lastSuccessfulFetch: new Date().toISOString(),
+      lastFailedFetch: null,
       rateLimit: rateLimitFromHeaders(response.headers),
     },
   };
