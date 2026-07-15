@@ -16,6 +16,7 @@ import { DailyForecast } from "./daily-forecast";
 import { HourlyChart } from "./hourly-chart";
 import { SystemHealthCard } from "./system-health-card";
 import { UsageCard } from "./usage-card";
+import { WeatherInsightsCard } from "./weather-insights-card";
 
 const simulations = [
   ["none", "No simulation"],
@@ -154,6 +155,7 @@ export function DashboardShell() {
           <aside className="space-y-5">
             {usageQuery.data ? <UsageCard usage={usageQuery.data} /> : <Card>Loading usage...</Card>}
             {weather ? <SystemHealthCard weather={weather} warning={weather.warning} /> : null}
+            {weather ? <WeatherInsightsCard weather={weather} /> : null}
           </aside>
         </section>
         {weather ? <DailyForecast daily={weather.daily} unitLabel={unitLabel} /> : null}
