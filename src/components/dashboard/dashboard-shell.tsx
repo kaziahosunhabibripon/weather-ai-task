@@ -125,14 +125,10 @@ export function DashboardShell() {
           <aside className="space-y-5">
             {usageQuery.data ? <UsageCard usage={usageQuery.data} /> : <Card>Loading usage...</Card>}
             {weather ? <SystemHealthCard weather={weather} warning={weather.warning} /> : null}
+            {weather ? <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} /> : null}
           </aside>
         </section>
-        {weather ? (
-          <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <DailyForecast daily={weather.daily} unitLabel={unitLabel} />
-            <AiSummaryCard weather={weather} onGenerate={onGenerateAi} isFetching={insightQuery.isFetching} />
-          </section>
-        ) : null}
+        {weather ? <DailyForecast daily={weather.daily} unitLabel={unitLabel} /> : null}
         <footer className="rounded-2xl border border-white/12 bg-slate-950/60 px-5 py-4 text-sm text-slate-400 shadow-xl shadow-black/20 backdrop-blur-xl">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
